@@ -1,0 +1,154 @@
+@startuml Project_Management_System
+' UML Class Diagram - Project Management System
+' Render at https://www.plantuml.com/plantuml or with the PlantUML CLI.
+
+skinparam classAttributeIconSize 0
+skinparam classBackgroundColor #FDFDFD
+skinparam classBorderColor #34495E
+skinparam packageStyle rectangle
+hide empty members
+
+' ===================== ENUMS =====================
+enum Designation {
+  PROJECT_MANAGER
+  BUSINESS_ANALYST
+  SENIOR_DEVELOPER
+  DEVELOPER
+  TESTER
+  DEVOPS_ENGINEER
+  - hourlyRate : double
+  + getHourlyRate() : double
+}
+
+enum LifeCyclePhase {
+  REQUIREMENT_FEASIBILITY
+  DEVELOPMENT
+  TESTING
+  DEPLOYMENT
+  MAINTENANCE
+}
+
+enum ProjectStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+' ===================== CORE =====================
+class Company {
+  - name : String
+  + registerClient(c : Client) : Client
+  + hireEmployee(e : Employee) : Employee
+  + addProject(p : Project) : Project
+  + assign(e : Employee, p : Project, role : String) : Assignment
+  + findEmployeesWithSkill(skill : String) : List<Employee>
+  + totalRevenue() : double
+}
+
+class Client {
+  - clientId : String
+  - name : String
+  - contactEmail : String
+}
+
+class Employee {
+  - employeeId : String
+  - name : String
+  + hasSkill(name : String) : boolean
+}
+
+class Skill {
+  - name : String
+}
+
+abstract class Project {
+  # projectId : String
+  # name : String
+  # status : ProjectStatus
+  + {abstract} complexityFactor() : double
+  + {abstract} projectType() : String
+  + assignEmployee(e : Employee, role : String) : Assignment
+  + advanceLifeCycle() : void
+  + addFeedback(f : ClientFeedback) : void
+  + invoiceAmount() : double
+  + averageFeedbackRating() : double
+}
+
+class WebApplicationProject {
+  + complexityFactor() : double
+  + projectType() : String
+}
+class MobileAppProject {
+  + complexityFactor() : double
+  + projectType() : String
+}
+class DataAnalyticsProject {
+  + complexityFactor() : double
+  + projectType() : String
+}
+
+class Assignment {
+  - roleOnProject : String
+  - assignedOn : LocalDate
+}
+
+class ProjectRequirement {
+  - department : String
+  - summary : String
+  - feasible : boolean
+  + addItem(item : String) : void
+}
+
+class DevelopmentTracker {
+  - currentPhase : LifeCyclePhase
+  + advancePhase() : boolean
+  + updateProgress(pct : int) : void
+  + overallCompletion() : double
+}
+
+class Billing {
+  - baseCost : double
+  - loggedHours : double
+  - taxRate : double
+  + computeTotal(complexity : double) : double
+}
+
+class ClientFeedback {
+  - rating : int
+  - comments : String
+  - givenOn : LocalDate
+}
+
+' ===================== RELATIONSHIPS =====================
+Project <|-- WebApplicationProject
+Project <|-- MobileAppProject
+Project <|-- DataAnalyticsProject
+
+Company "1" o-- "*" Client        : handles >
+Company "1" o-- "*" Employee      : employs >
+Company "1" o-- "*" Project       : runs >
+
+Client "1" --> "*" Project        : owns >
+Employee "1" --> "*" Skill        : has >
+Employee "1" -- "*" Assignment    : works on >
+Project  "1" -- "*" Assignment    : staffed by >
+
+Project "1" *-- "1" ProjectRequirement : requirement
+Project "1" *-- "1" DevelopmentTracker  : tracker
+Project "1" *-- "1" Billing             : billing
+Project "1" *-- "*" ClientFeedback      : feedback
+
+Employee ..> Designation
+DevelopmentTracker ..> LifeCyclePhase
+ClientFeedback ..> LifeCyclePhase
+Project ..> ProjectStatus
+Skill ..> SkillLevel
+@enduml

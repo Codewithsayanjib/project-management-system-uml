@@ -1,0 +1,65 @@
+======================================================================
+PROJECT MANAGEMENT SYSTEM - DEMO SCENARIO
+======================================================================
+Company: Acme Software Pvt. Ltd.
+Total clients : 2
+Total employees: 5
+Total projects : 2
+
+----------------------------------------------------------------------
+WebApplicationProject "RetailKart Storefront" [P-01] client=RetailKart status=COMPLETED type=Web Application
+  Requirement : Requirement[dept=E-Commerce, feasible=true]: Online storefront with cart & payments [Product catalogue, Shopping cart, Payment gateway]
+  Life cycle  : Tracker[current=Maintenance] Requirement & Feasibility=100% Development=100% Testing=100% Deployment=100% Maintenance=0%
+  Completion  : 80%
+  Assignments (which employee handles this project):
+      - Alice handles "RetailKart Storefront" as Project Manager (since 2026-07-08)
+      - Bob handles "RetailKart Storefront" as Lead Developer (since 2026-07-08)
+      - Dan handles "RetailKart Storefront" as QA Engineer (since 2026-07-08)
+  Client feedback at each stage:
+      - [Requirement & Feasibility] 5/5 - "Scope looks great" (2026-07-08)
+      - [Development] 4/5 - "Good progress on cart" (2026-07-08)
+      - [Testing] 4/5 - "Few bugs, fixed quickly" (2026-07-08)
+      - [Deployment] 5/5 - "Smooth go-live" (2026-07-08)
+  Avg feedback: 4.50 / 5
+  Billing[base=5000.00, hours=180.0, rate=55.00, tax=18%, paid=false]
+  Invoice (incl. tax, complexity x1.2): 21098.40
+
+----------------------------------------------------------------------
+MobileAppProject "MediCare Patient App" [P-02] client=MediCare Labs status=IN_PROGRESS type=Mobile Application
+  Requirement : Requirement[dept=Healthcare, feasible=true]: Patient appointment & records app [Appointment booking, Lab report viewer]
+  Life cycle  : Tracker[current=Requirement & Feasibility] Requirement & Feasibility=0% Development=0% Testing=0% Deployment=0% Maintenance=0%
+  Completion  : 0%
+  Assignments (which employee handles this project):
+      - Carol handles "MediCare Patient App" as Android Developer (since 2026-07-08)
+      - Eve handles "MediCare Patient App" as DevOps (since 2026-07-08)
+  Client feedback at each stage:
+      - [Requirement & Feasibility] 4/5 - "Clear requirements" (2026-07-08)
+  Avg feedback: 4.00 / 5
+  Billing[base=7000.00, hours=90.0, rate=60.00, tax=18%, paid=false]
+  Invoice (incl. tax, complexity x1.4): 20484.80
+
+======================================================================
+TOTAL COMPANY REVENUE: 41583.20
+======================================================================
+
+======================================================================
+TEST CASES
+======================================================================
+  [PASS] Employee.hasSkill finds an existing skill
+  [PASS] Employee.hasSkill rejects a missing skill
+  [PASS] Assignment appears on the project
+  [PASS] Assignment appears on the employee
+  [PASS] Project starts NOT_STARTED
+  [PASS] Project becomes IN_PROGRESS after first assignment
+  [PASS] Tracker starts at REQUIREMENT_FEASIBILITY
+  [PASS] Tracker advances to DEVELOPMENT
+  [PASS] Project is COMPLETED after full life cycle
+  [PASS] Higher complexity yields higher bill
+  [PASS] Web invoice equals 1500 * 1.2 = 1800
+  [PASS] Feedback rating outside 1..5 is rejected
+  [PASS] Average feedback is (4+2)/2 = 3.0
+  [PASS] findEmployeesWithSkill returns only matching employees
+  [PASS] totalRevenue aggregates all projects
+----------------------------------------------------------------------
+RESULT: 15 passed, 0 failed, 15 total
+======================================================================
