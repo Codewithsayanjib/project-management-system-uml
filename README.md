@@ -8,13 +8,12 @@
 ![Dependencies](https://img.shields.io/badge/dependencies-none-8B5CF6?style=flat-square)
 ![Tests](https://img.shields.io/badge/tests-15%20passed-22C55E?style=flat-square)
 ![UI](https://img.shields.io/badge/UI-Swing%20·%20light%20%2F%20dark-0EA5E9?style=flat-square)
-![Report](https://img.shields.io/badge/report-14--page%20PDF-EF4444?style=flat-square&logo=adobeacrobatreader&logoColor=white)
+![Report](https://img.shields.io/badge/report-10--page%20PDF-EF4444?style=flat-square&logo=adobeacrobatreader&logoColor=white)
 
 **A company runs projects for many clients, and staffs each project with the right people.**<br>
 This models that world as objects — then draws it, tests it, and puts a desktop app on top.
 
 **[Read the report (PDF)](docs/Project_Management_System_Report.pdf)**&nbsp; ·&nbsp;
-**[UML class diagram](docs/uml_class_diagram.png)**&nbsp; ·&nbsp;
 **[Jump to quickstart](#-quickstart)**
 
 <br>
@@ -113,7 +112,7 @@ classDiagram
 
 <sub>Aggregation (◇) where the part outlives the whole — an employee survives the company record.
 Composition (◆) where it cannot — a `Billing` has no meaning without its project.
-The full diagram, with every attribute and method, is in **[the report](docs/Project_Management_System_Report.pdf)**.</sub>
+The full diagram, with every attribute and method, is in the report.</sub>
 
 ---
 
@@ -191,11 +190,8 @@ src/com/pms/enums/    Designation · LifeCyclePhase · ProjectStatus · SkillLev
 src/com/pms/model/    the domain — Project is the abstract super class
 src/com/pms/app/      ProjectManagementDemo (driver) · TestRunner (tests)
 src/com/pms/ui/       Swing front end
-docs/                 the report, the UML source and the figures
+docs/                 the report
 ```
-
-The class diagram lives in [`uml_class_diagram.puml`](docs/uml_class_diagram.puml) and renders at
-[plantuml.com](https://www.plantuml.com/plantuml).
 
 <div align="center">
 <br>
