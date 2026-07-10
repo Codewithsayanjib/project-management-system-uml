@@ -51,4 +51,21 @@ print("pages:", n)
 PY
 
 rm -f report_raw.pdf
-echo "==> Done: docs/Project_Management_System_Report.pdf"
+
+PDF=Project_Management_System_Report.pdf
+if command -v gs >/dev/null 2>&1; then
+  echo "==> Compressing images (200 dpi) to keep the PDF under 1 MB"
+  gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dCompatibilityLevel=1.7 \
+     -dDetectDuplicateImages=true -dCompressFonts=true \
+     -dDownsampleColorImages=true -dColorImageResolution=200 \
+     -dColorImageDownsampleType=/Bicubic \
+     -dAutoFilterColorImages=false -dColorImageFilter=/DCTEncode \
+     -sOutputFile="$PDF.tmp" "$PDF"
+  mv "$PDF.tmp" "$PDF"
+else
+  echo "!!  ghostscript not found - the PDF will be larger than 1 MB"
+fi
+
+BYTES=$(wc -c < "$PDF" | tr -d ' ')
+printf "==> Done: docs/%s (%s bytes, %.1f KB)\n" "$PDF" "$BYTES" "$(echo "$BYTES/1024" | bc -l)"
+[ "$BYTES" -lt 1000000 ] || { echo "!!  WARNING: PDF is over 1 MB"; exit 1; }
