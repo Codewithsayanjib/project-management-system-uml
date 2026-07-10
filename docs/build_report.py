@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 """
 Generates report.html (and then the PDF, via build_report.sh) for the
-Software Lab II assignment. Code listings are read straight out of the
-source tree so that the report can never drift from the code.
+Software Lab II assignment.
 """
-import html
-import re
 import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SRC = os.path.join(HERE, "..", "src")
 
 
 def make_rotated_uml():
@@ -20,52 +16,6 @@ def make_rotated_uml():
     dst = os.path.join(HERE, "uml_class_diagram_rot.png")
     Image.open(src).rotate(90, expand=True).save(dst)
     print("wrote", dst)
-
-
-def _drop_boilerplate_methods(code):
-    """Remove accessor methods (getX()) and toString(), with any @Override
-    line immediately above them. Brace-counted so nested blocks are safe."""
-    lines = code.split("\n")
-    out, i = [], 0
-    sig = re.compile(r"^\s*(public|protected|private)\s+[\w<>\[\],. ]+\s+"
-                     r"(get[A-Z]\w*|toString)\s*\(\s*\)\s*\{")
-    while i < len(lines):
-        if sig.match(lines[i]):
-            # drop a preceding @Override / blank line we already emitted
-            while out and out[-1].strip() in ("@Override", ""):
-                out.pop()
-            depth = 0
-            while i < len(lines):
-                depth += lines[i].count("{") - lines[i].count("}")
-                i += 1
-                if depth <= 0:
-                    break
-            continue
-        out.append(lines[i])
-        i += 1
-    return "\n".join(out)
-
-
-def load(path, drop_accessors=True):
-    with open(os.path.join(SRC, path), encoding="utf-8") as f:
-        code = f.read()
-    # strip javadoc blocks together with the indentation of their opening line
-    code = re.sub(r"^[ \t]*/\*\*.*?\*/[ \t]*\n", "", code, flags=re.S | re.M)
-    code = re.sub(r"^package .*?;\n+", "", code, flags=re.M)
-    code = re.sub(r"^import .*?;\n", "", code, flags=re.M)
-    if drop_accessors:
-        code = _drop_boilerplate_methods(code)
-    # tidy: drop banner comments left dangling, collapse blank runs
-    code = re.sub(r"^\s*// ----.*\n", "", code, flags=re.M)
-    code = re.sub(r"\n{3,}", "\n\n", code)
-    code = re.sub(r"\{\n\n", "{\n", code)
-    code = re.sub(r"\n\n\}", "\n}", code)
-    return html.escape(code.strip())
-
-
-def listing(n, caption, code):
-    return (f'<div class="listing">\n<pre>{code}</pre>\n'
-            f'<div class="lcap">Listing {n}: {caption}</div>\n</div>\n')
 
 
 TESTS = [
@@ -104,7 +54,7 @@ html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 body { font-family: "Times New Roman", Times, serif; font-size: 12pt; line-height: 1.5;
        color: #000; margin: 0; }
 p { margin: 0 0 8pt; text-align: justify; }
-h2 { font-size: 13.5pt; font-weight: bold; margin: 18pt 0 7pt; page-break-after: avoid; }
+h2 { font-size: 13.5pt; font-weight: bold; margin: 14pt 0 6pt; page-break-after: avoid; }
 h3 { font-size: 12pt; font-weight: bold; margin: 12pt 0 5pt; page-break-after: avoid; }
 ul, ol { margin: 4pt 0 8pt; padding-left: 22pt; }
 li { margin: 2pt 0; text-align: justify; }
@@ -127,9 +77,10 @@ code { font-size: 10.5pt; }
 .cv-details td.l { padding-right: 10px; white-space: nowrap; }
 
 /* figures */
-figure { margin: 10pt 0; text-align: center; page-break-inside: avoid; }
+figure { margin: 6pt 0; text-align: center; page-break-inside: avoid; }
 figure img { max-width: 100%; border: 1px solid #555; }
-figure .row { display: flex; gap: 8px; align-items: flex-start; }
+figure .row { display: flex; gap: 8px; align-items: flex-start;
+              max-width: 78%; margin: 0 auto; }
 figure .row .col { flex: 1; }
 figure .row img { width: 100%; }
 figcaption { font-size: 11pt; margin-top: 6pt; }
@@ -145,15 +96,9 @@ table.t td.m, table.t td.m { font-family: "Courier New", monospace; font-size: 9
 .pass { font-weight: bold; }
 .tcap { font-size: 11pt; text-align: center; margin: 0 0 12pt; }
 ul.run li { text-align: left; }
-.repo { text-align: center; font-size: 11pt; border: 1px solid #000; padding: 6pt;
-        margin: 8pt 0 12pt; word-break: break-all; }
+.repo { text-align: center; font-size: 11pt; border: 1px solid #000; padding: 5pt;
+        margin: 6pt 0 8pt; word-break: break-all; }
 
-/* code listings: long ones may flow across a page, but the caption always
-   stays with the end of the listing */
-.listing { margin: 8pt 0 12pt; }
-.listing pre { border: 1px solid #666; padding: 7px 9px; margin: 0; font-size: 8.6pt;
-               line-height: 1.32; white-space: pre-wrap; overflow-wrap: break-word; }
-.lcap { font-size: 11pt; text-align: center; margin-top: 5pt; page-break-before: avoid; }
 """
 
 HTML = f"""<!DOCTYPE html>
@@ -294,50 +239,32 @@ clockwise to read it. It was prepared in PlantUML, and the source file
 </div>
 
 <h2>5. Implementation</h2>
-<p>The system is implemented in Java (JDK 11). The source is divided into three
-packages. <code>com.pms.enums</code> contains the four enumerations,
-<code>com.pms.model</code> contains the domain classes, and
-<code>com.pms.app</code> contains the demonstration driver and the test suite.
-A fourth package, <code>com.pms.ui</code>, contains the graphical front end
-described in Section 7.</p>
+<p>The system is implemented in Java (JDK 11) and uses no external libraries.
+The source is divided into four packages. <code>com.pms.enums</code> holds the
+four enumerations, <code>com.pms.model</code> holds the domain classes,
+<code>com.pms.app</code> holds the demonstration driver and the test suite, and
+<code>com.pms.ui</code> holds the graphical front end described in Section 7.</p>
 
-<h3>5.1 The super class</h3>
 <p><code>Project</code> is declared abstract. It owns the requirement, the
 tracker, the billing record, the list of assignments and the feedback log, and
-declares two abstract operations that every concrete project type must supply.
-The method <code>invoiceAmount()</code> calls <code>complexityFactor()</code>
-without knowing which subclass is executing, which is where the polymorphism of
-the design is exercised.</p>
-{listing(1, "Project.java, the abstract super class. Accessor methods and toString() are omitted.", load("com/pms/model/Project.java"))}
+declares the abstract operations <code>complexityFactor()</code> and
+<code>projectType()</code> that every concrete project type must supply. The
+method <code>invoiceAmount()</code> calls <code>complexityFactor()</code> without
+knowing which subclass is executing, and it is here that the polymorphism of the
+design is exercised. The three concrete types differ only in the factor they
+return: 1.2 for a web application, 1.4 for a mobile application and 1.6 for a
+data-analytics project.</p>
 
-<p>The three concrete project types differ only in the complexity factor they
-return and the name they report.</p>
-{listing(2, "WebApplicationProject.java. The other two subclasses are identical in form, returning 1.4 and 1.6 respectively.", load("com/pms/model/WebApplicationProject.java"))}
-
-<h3>5.2 The association class</h3>
-<p>Creating an <code>Assignment</code> registers it on the employee inside the
-constructor, and <code>Project.assignEmployee()</code> adds it to the project.
-Both ends of the association are therefore always consistent, and the model
-cannot reach a state in which one side knows of a link that the other does not.</p>
-{listing(3, "Assignment.java, the association class between Employee and Project. Accessors omitted.", load("com/pms/model/Assignment.java"))}
-
-<h3>5.3 The development tracker</h3>
-<p>The tracker holds a completion percentage for each phase and a reference to
-the phase currently in progress. Because <code>LifeCyclePhase</code> is an
-enumeration, the next phase is obtained from the ordinal of the current one,
-which guarantees that the phases cannot be visited out of order.</p>
-{listing(4, "DevelopmentTracker.java. Accessors omitted.", load("com/pms/model/DevelopmentTracker.java"))}
-
-<h3>5.4 Billing</h3>
-<p>The invoice is the sum of a fixed base cost and the labour cost, multiplied by
-the complexity factor of the project and increased by the rate of tax.</p>
-{listing(5, "Billing.java. Accessors omitted.", load("com/pms/model/Billing.java"))}
-
-<h3>5.5 Allocation of employees</h3>
-<p><code>Company</code> refuses to allocate an employee who is not on its rolls
-or to a project it does not run. It also provides a skill search, which is used
-when a project has to be staffed for a particular requirement.</p>
-{listing(6, "Company.java. Accessors omitted.", load("com/pms/model/Company.java"))}
+<p>Three points of the implementation are worth recording. First, both ends of
+the employee-to-project association are kept consistent: the constructor of
+<code>Assignment</code> registers the new link on the employee, while
+<code>Project.assignEmployee()</code> adds it to the project, so the model cannot
+reach a state in which one side knows of a link that the other does not. Second,
+invalid data is rejected at construction rather than stored, so a client-feedback
+rating outside the range one to five raises an exception. Third, because
+<code>LifeCyclePhase</code> is an enumeration, the tracker obtains the next phase
+from the ordinal of the current one, which guarantees that the phases of the life
+cycle cannot be visited out of order.</p>
 
 <h2>6. Testing</h2>
 <p>A test suite was written that requires no external framework, so that the
@@ -358,7 +285,7 @@ cases and their results are given in Table 2. All fifteen cases pass.</p>
 the report of the demonstration scenario and the lower portion is the result of
 the test suite.</p>
 <figure>
-  <img src="console_output.png" alt="Program output" style="max-width:88%">
+  <img src="console_output.png" alt="Program output" style="max-width:78%">
   <figcaption>Figure 2: Output of <span class="m">ProjectManagementDemo</span>.</figcaption>
 </figure>
 
@@ -376,12 +303,12 @@ underlying object, and the progress bars, the status and the invoice are redrawn
 from the new state of the model.</p>
 
 <figure>
-  <img src="gui_dashboard_light.png" alt="Dashboard" style="max-width:95%">
+  <img src="gui_dashboard_light.png" alt="Dashboard" style="max-width:74%">
   <figcaption>Figure 3: Dashboard view.</figcaption>
 </figure>
 
 <figure>
-  <img src="gui_projects_light.png" alt="Projects" style="max-width:100%">
+  <img src="gui_projects_light.png" alt="Projects" style="max-width:84%">
   <figcaption>Figure 4: Project view, showing the life-cycle tracker, the assigned
   team, the requirement, the client feedback and the billing of each project.</figcaption>
 </figure>

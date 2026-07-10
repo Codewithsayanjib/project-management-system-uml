@@ -8,7 +8,7 @@ CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 echo "==> Rendering the console figure from sample_output.txt"
 python3 make_console_image.py
 
-echo "==> Generating report.html (code listings read from ../src)"
+echo "==> Generating report.html"
 python3 build_report.py
 
 echo "==> Rendering PDF"
